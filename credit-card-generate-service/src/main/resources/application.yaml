@@ -1,0 +1,30 @@
+server:
+  port: 8585
+spring:
+  application:
+    name: credit-card-generate-service
+  cloud:
+    function:
+      definition: generateCreditCard
+    stream:
+      kafka:
+        binder:
+          brokers: localhost:9092
+          replicationFactor: 1
+        bindings:
+          generateCreditCard-in-0:
+            destination: CreditCardVerification
+            group: creditCard
+            consumer:
+              max-attempts: 1
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url: jdbc:h2:mem:credit-card-generate-application
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: update

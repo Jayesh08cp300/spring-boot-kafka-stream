@@ -1,0 +1,32 @@
+server:
+  port: 8484
+spring:
+  application:
+    name: credit-card-verify-service
+  cloud:
+    function:
+      definition: verifyCreditCardApplication
+    stream:
+      source: verifyCreditCardApplication-out-0
+      kafka:
+        binder:
+          brokers: localhost:9092
+          replicationFactor: 1
+        bindings:
+          verifyCreditCardApplication-in-0:
+            destination: CreditCardApplication
+            group: creditCard
+          verifyCreditCardApplication-out-0:
+              destination: CreditCardVerification
+              group: creditCard
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url: jdbc:h2:mem:credit-card-verify-application
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: update

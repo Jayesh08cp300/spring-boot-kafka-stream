@@ -5,31 +5,32 @@ import com.example.event.VerifyCreditCardEvent;
 import com.example.service.CreditCardVerificationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@Component
+import java.util.function.Function;
+
+@Configuration
 @AllArgsConstructor
 @Slf4j
 public class CreditCardApplicationProcessor {
 
-	private final KafkaTemplate<String, VerifyCreditCardEvent> kafkaTemplate;
 	private CreditCardVerificationService creditCardVerificationService;
 
-	@KafkaListener(topics = "creditCardApplicationTopic", groupId = "creditCardApplicationGroupId")
-	public void verifyCreditCardApplication(NewCreditCardEvent newCreditCardEvent) {
-		var verifyCreditCardEvent = creditCardVerificationService.verifyCreditCardApplication(newCreditCardEvent);
+	@Bean
+	public Function<NewCreditCardEvent, VerifyCreditCardEvent> verifyCreditCardApplication() {
 
-		log.info("**** Publishing credit card applications verification status : {} **** ",
-				verifyCreditCardEvent.getCreditCardVerificationStatus()
-						.size());
+		return newCreditCardEvent -> {
 
-		if (!(verifyCreditCardEvent.getCreditCardVerificationStatus()
-				.isEmpty())) {
-			log.info("New Credit Card Application verify.");
-			kafkaTemplate.send("verifyCreditCardApplicationTopic", verifyCreditCardEvent);
-		}
+			var verifyCreditCardEvent = creditCardVerificationService.verifyCreditCardApplication(newCreditCardEvent);
+
+			log.info("**** Publishing credit card applications verification status : {} **** ",
+					verifyCreditCardEvent.getCreditCardVerificationStatus()
+							.size());
+
+			return (verifyCreditCardEvent.getCreditCardVerificationStatus()
+					.isEmpty()) ? null : verifyCreditCardEvent;
+		};
 	}
 
 }

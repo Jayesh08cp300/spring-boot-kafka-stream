@@ -1,0 +1,31 @@
+server:
+  port: 8383
+spring:
+  application:
+    name: credit-card-apply-service
+  cloud:
+    function:
+      definition: publishNewCreditCardEvent
+    stream:
+      source: publishNewCreditCardEvent-out-0
+      kafka:
+        binder:
+          brokers: localhost:9092
+          replicationFactor: 1
+        bindings:
+          publishNewCreditCardEvent-out-0:
+            destination: CreditCardApplication
+            group: creditcard
+            producer:
+              partitionCount: 3
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url: jdbc:h2:mem:credit-card-application
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: update
