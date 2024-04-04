@@ -11,12 +11,12 @@ spring:
         binder:
           brokers: localhost:9092
           replicationFactor: 1
-        bindings:
-          generateCreditCard-in-0:
-            destination: CreditCardVerification
-            group: creditCard
-            consumer:
-              max-attempts: 1
+      bindings:
+        generateCreditCard-in-0:
+          destination: CreditCardVerification
+          group: credit-card
+          consumer:
+            max-attempts: 1
   h2:
     console:
       enabled: true

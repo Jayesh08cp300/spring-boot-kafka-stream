@@ -7,18 +7,17 @@ spring:
     function:
       definition: verifyCreditCardApplication
     stream:
-      source: verifyCreditCardApplication-out-0
       kafka:
         binder:
           brokers: localhost:9092
           replicationFactor: 1
-        bindings:
-          verifyCreditCardApplication-in-0:
-            destination: CreditCardApplication
-            group: creditCard
-          verifyCreditCardApplication-out-0:
-              destination: CreditCardVerification
-              group: creditCard
+      bindings:
+        verifyCreditCardApplication-in-0:
+          destination: CreditCardApplication
+          group: credit-card
+        verifyCreditCardApplication-out-0:
+            destination: CreditCardVerification
+            group: credit-card
   h2:
     console:
       enabled: true
